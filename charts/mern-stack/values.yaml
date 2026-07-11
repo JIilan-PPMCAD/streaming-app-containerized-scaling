@@ -1,0 +1,26 @@
+global:
+  awsAccountId: "319918321628"
+  region: "ap-south-1"
+  environment: "production"
+
+frontend:
+  name: mern-frontend
+  repository: "mern-frontend"
+  tag: "latest"
+  replicaCount: 2
+  containerPort: 80
+
+helloService:
+  name: mern-hello-service
+  repository: "mern-hello-service"
+  tag: "latest"
+  replicaCount: 2
+  containerPort: 3001
+
+profileService:
+  name: mern-profile-service
+  repository: "mern-profile-service"
+  tag: "latest"
+  replicaCount: 2
+  containerPort: 3002
+  mongoURI: "mongodb://mongodb-service.default.svc.cluster.local:27017/profiles"

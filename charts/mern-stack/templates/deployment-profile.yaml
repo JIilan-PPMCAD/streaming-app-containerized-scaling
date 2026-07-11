@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.profileService.name }}
+  namespace: default
+  labels:
+    app: {{ .Values.profileService.name }}
+spec:
+  replicas: {{ .Values.profileService.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.profileService.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.profileService.name }}
+    spec:
+      containers:
+        - name: profile-service
+          image: "{{ .Values.global.awsAccountId }}.dkr.ecr.{{ .Values.global.region }}://{{ .Values.profileService.repository }}:{{ .Values.profileService.tag }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: {{ .Values.profileService.containerPort }}
+          env:
+            - name: MONGO_URI
+              value: {{ .Values.profileService.mongoURI | quote }}
+          resources:
+            requests:
+              cpu: "150m"
+              memory: "256Mi"
+            limits:
+              cpu: "300m"
+              memory: "512Mi"

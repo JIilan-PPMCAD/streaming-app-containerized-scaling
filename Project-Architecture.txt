@@ -1,0 +1,26 @@
+STREAMING-APP-CONTAINER/  ⬅️ (Your Project Root Git Repository)
+├── .gitignore
+├── Jenkinsfile
+├── eks-cluster.yaml       ⬅️ (Place your EKS cluster definition right here)
+├── backend/
+│   ├── helloService/
+│   │   ├── Dockerfile
+│   │   └── index.js
+│   └── profileService/
+│       ├── Dockerfile
+│       └── index.js
+├── frontend/
+│   ├── Dockerfile
+│   ├── public/
+│   └── src/
+└── charts/                ⬅️ (Create a "charts" folder for your deployment templates)
+    └── mern-stack/
+        ├── Chart.yaml
+        ├── values.yaml
+        └── templates/
+            ├── deployment-frontend.yaml
+            ├── deployment-hello.yaml
+            ├── deployment-profile.yaml
+            ├── service-frontend.yaml
+            ├── service-hello.yaml
+            └── service-profile.yaml

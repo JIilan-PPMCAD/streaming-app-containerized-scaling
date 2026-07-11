@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.helloService.name }}
+  namespace: default
+  labels:
+    app: {{ .Values.helloService.name }}
+spec:
+  replicas: {{ .Values.helloService.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.helloService.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.helloService.name }}
+    spec:
+      containers:
+        - name: hello-service
+          image: "{{ .Values.global.awsAccountId }}.dkr.ecr.{{ .Values.global.region }}://{{ .Values.helloService.repository }}:{{ .Values.helloService.tag }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: {{ .Values.helloService.containerPort }}
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
