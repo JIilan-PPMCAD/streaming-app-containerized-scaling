@@ -18,3 +18,4 @@ managedNodeGroups:
       withAddonPolicies:
         cloudWatch: true
         albIngress: true
+

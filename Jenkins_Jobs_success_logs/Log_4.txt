@@ -1,0 +1,761 @@
+Started by user Jilan
+Obtained Jenkinsfile from git https://github.com/JIilan-PPMCAD/streaming-app-containerized-scaling
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/lib/jenkins/workspace/streaming-app-containerized-scaling
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+using credential jenkins-repo-access
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/streaming-app-containerized-scaling/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/JIilan-PPMCAD/streaming-app-containerized-scaling # timeout=10
+Fetching upstream changes from https://github.com/JIilan-PPMCAD/streaming-app-containerized-scaling
+ > git --version # timeout=10
+ > git --version # 'git version 2.53.0'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://github.com/JIilan-PPMCAD/streaming-app-containerized-scaling +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision 5f4e06c2673671d287cd36467f29ae9e4a774192 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 5f4e06c2673671d287cd36467f29ae9e4a774192 # timeout=10
+Commit message: "fix: resolve parallel network limitations with sequential build processing"
+ > git rev-list --no-walk 5f4e06c2673671d287cd36467f29ae9e4a774192 # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Step 4: Checkout Source)
+[Pipeline] cleanWs
+[WS-CLEANUP] Deleting project workspace...
+[WS-CLEANUP] Deferred wipeout is used...
+[WS-CLEANUP] done
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+using credential jenkins-repo-access
+Cloning the remote Git repository
+Cloning repository https://github.com/JIilan-PPMCAD/streaming-app-containerized-scaling
+ > git init /var/lib/jenkins/workspace/streaming-app-containerized-scaling # timeout=10
+Fetching upstream changes from https://github.com/JIilan-PPMCAD/streaming-app-containerized-scaling
+ > git --version # timeout=10
+ > git --version # 'git version 2.53.0'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://github.com/JIilan-PPMCAD/streaming-app-containerized-scaling +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://github.com/JIilan-PPMCAD/streaming-app-containerized-scaling # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision 5f4e06c2673671d287cd36467f29ae9e4a774192 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 5f4e06c2673671d287cd36467f29ae9e4a774192 # timeout=10
+Commit message: "fix: resolve parallel network limitations with sequential build processing"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Step 3: AWS ECR Authentication)
+[Pipeline] withCredentials
+Masking supported pattern matches of $AWS_ACCESS_KEY_ID or $AWS_SECRET_ACCESS_KEY
+[Pipeline] {
+[Pipeline] sh
++ aws ecr get-login-password --region ap-south-1
++ docker login --username AWS --password-stdin 319918321628.dkr.ecr.ap-south-1.amazonaws.com
+
+WARNING! Your credentials are stored unencrypted in '/var/lib/jenkins/.docker/config.json'.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/go/credential-store/
+
+Login Succeeded
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Step 2: Build & Push Frontend)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] dir
+Running in /var/lib/jenkins/workspace/streaming-app-containerized-scaling/frontend
+[Pipeline] {
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker build -t 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-frontend:4 .
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  753.2kB
+Step 1/10 : FROM node:18-alpine AS build
+18-alpine: Pulling from library/node
+25ff2da83641: Pulling fs layer
+f18232174bc9: Pulling fs layer
+dd71dde834b5: Pulling fs layer
+1e5a4c89cee5: Pulling fs layer
+25ff2da83641: Download complete
+1e5a4c89cee5: Download complete
+f18232174bc9: Download complete
+27e1cfd0b5f2: Download complete
+f18232174bc9: Pull complete
+0758d11b0bb7: Download complete
+dd71dde834b5: Download complete
+dd71dde834b5: Pull complete
+25ff2da83641: Pull complete
+1e5a4c89cee5: Pull complete
+Digest: sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e
+Status: Downloaded newer image for node:18-alpine
+ ---> 8d6421d663b4
+Step 2/10 : WORKDIR /app
+ ---> Running in 1e5bd659922e
+ ---> Removed intermediate container 1e5bd659922e
+ ---> e218c6f92cbf
+Step 3/10 : COPY package*.json ./
+ ---> d2129f407d86
+Step 4/10 : RUN npm install
+ ---> Running in 2a6bd35e9b82
+[91mnpm warn deprecated w3c-hr-time@1.0.2: Use your platform's native performance.now() and performance.timeOrigin.
+[0m[91mnpm warn deprecated sourcemap-codec@1.4.8: Please use @jridgewell/sourcemap-codec instead
+[0m[91mnpm warn deprecated stable@0.1.8: Modern JS already guarantees Array#sort() is a stable sort, so this library is deprecated. See the compatibility table on MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#browser_compatibility
+[0m[91mnpm warn deprecated rollup-plugin-terser@7.0.2: This package has been deprecated and is no longer maintained. Please use @rollup/plugin-terser
+[0m[91mnpm warn deprecated workbox-cacheable-response@6.6.0: workbox-background-sync@6.6.0
+[0m[91mnpm warn deprecated domexception@2.0.1: Use your platform's native DOMException instead
+[0m[91mnpm warn deprecated abab@2.0.6: Use your platform's native atob() and btoa() methods instead
+[0m[91mnpm warn deprecated @babel/plugin-proposal-optional-chaining@7.21.0: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-optional-chaining instead.
+npm warn deprecated @babel/plugin-proposal-nullish-coalescing-operator@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-nullish-coalescing-operator instead.
+npm warn deprecated @babel/plugin-proposal-private-methods@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-private-methods instead.
+npm warn deprecated @babel/plugin-proposal-numeric-separator@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-numeric-separator instead.
+npm warn deprecated @babel/plugin-proposal-class-properties@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-class-properties instead.
+[0m[91mnpm warn deprecated svgo@1.3.2: This SVGO version is no longer supported. Upgrade to v2.x.x.
+[0m
+added 1534 packages, and audited 1535 packages in 60s
+
+246 packages are looking for funding
+  run `npm fund` for details
+
+66 vulnerabilities (15 low, 20 moderate, 29 high, 2 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+[91mnpm notice
+npm notice New major version of npm available! 10.8.2 -> 12.0.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.1
+npm notice To update run: npm install -g npm@12.0.1
+npm notice
+[0m ---> Removed intermediate container 2a6bd35e9b82
+ ---> 746b0ecfb728
+Step 5/10 : COPY . .
+ ---> 89cc63ee199d
+Step 6/10 : RUN npm run build
+ ---> Running in 8abd62b1a1da
+
+> frontend@0.1.0 build
+> react-scripts build
+
+Creating an optimized production build...
+[91mBrowserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[0m[91m[0;33mOne of your dependencies, babel-preset-react-app, is importing the
+"@babel/plugin-proposal-private-property-in-object" package without
+declaring it in its dependencies. This is currently working because
+"@babel/plugin-proposal-private-property-in-object" is already in your
+node_modules folder for unrelated reasons, but it [1mmay break at any time[0;33m.
+
+babel-preset-react-app is part of the create-react-app project, [1mwhich
+is not maintianed anymore[0;33m. It is thus unlikely that this bug will
+ever be fixed. Add "@babel/plugin-proposal-private-property-in-object" to
+your devDependencies to work around this error. This will make this message
+go away.[0m
+  
+[0mCompiled successfully.
+
+File sizes after gzip:
+
+  57.68 kB  build/static/js/main.7c7a6051.js
+  1.77 kB   build/static/js/787.9e9f4ffd.chunk.js
+  513 B     build/static/css/main.f855e6bc.css
+
+The project was built assuming it is hosted at /.
+You can control this with the homepage field in your package.json.
+
+The build folder is ready to be deployed.
+You may serve it with a static server:
+
+  npm install -g serve
+  serve -s build
+
+Find out more about deployment here:
+
+  https://cra.link/deployment
+
+ ---> Removed intermediate container 8abd62b1a1da
+ ---> 099ec6db7281
+Step 7/10 : FROM nginx:alpine
+alpine: Pulling from library/nginx
+c75b9c33e8b0: Pulling fs layer
+e6f31ffc071e: Pulling fs layer
+c16defe09b2f: Pulling fs layer
+5b429a43b8df: Pulling fs layer
+967885d218c5: Pulling fs layer
+ab1fd9049751: Pulling fs layer
+ce42635eeddd: Pulling fs layer
+01bf363d61e6: Pulling fs layer
+01bf363d61e6: Download complete
+5b429a43b8df: Download complete
+e6f31ffc071e: Download complete
+c16defe09b2f: Download complete
+967885d218c5: Download complete
+ab1fd9049751: Download complete
+ce42635eeddd: Download complete
+c75b9c33e8b0: Download complete
+e6f31ffc071e: Pull complete
+84fd3fc5237f: Download complete
+9e6bf8ac91af: Download complete
+c16defe09b2f: Pull complete
+5b429a43b8df: Pull complete
+967885d218c5: Pull complete
+ab1fd9049751: Pull complete
+ce42635eeddd: Pull complete
+01bf363d61e6: Pull complete
+c75b9c33e8b0: Pull complete
+Digest: sha256:54f2a904c251d5a34adf545a72d32515a15e08418dae0266e23be2e18c66fefa
+Status: Downloaded newer image for nginx:alpine
+ ---> 54f2a904c251
+Step 8/10 : COPY --from=build /app/build /usr/share/nginx/html
+ ---> b845675db210
+Step 9/10 : EXPOSE 80
+ ---> Running in 80d7f7ddc9ba
+ ---> Removed intermediate container 80d7f7ddc9ba
+ ---> 9673fa295cf2
+Step 10/10 : CMD ["nginx", "-g", "daemon off;"]
+ ---> Running in 238c32766d19
+ ---> Removed intermediate container 238c32766d19
+ ---> 8a2146966373
+Successfully built 8a2146966373
+Successfully tagged 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-frontend:4
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker tag 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-frontend:4 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-frontend:4
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker push 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-frontend:4
+The push refers to repository [319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-frontend]
+6a190619c168: Waiting
+e6f31ffc071e: Waiting
+c16defe09b2f: Waiting
+5b429a43b8df: Waiting
+967885d218c5: Waiting
+ce42635eeddd: Waiting
+c75b9c33e8b0: Waiting
+ab1fd9049751: Waiting
+01bf363d61e6: Waiting
+6a190619c168: Pushed
+5b429a43b8df: Pushed
+967885d218c5: Pushed
+ce42635eeddd: Pushed
+ab1fd9049751: Pushed
+01bf363d61e6: Pushed
+e6f31ffc071e: Pushed
+c16defe09b2f: Pushed
+c75b9c33e8b0: Pushed
+4: digest: sha256:8a21469663731c1e9803d90589ccb5ea6ca877f3df25f19b465583ea731274f7 size: 2264
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker tag 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-frontend:4 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-frontend:latest
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker push 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-frontend:latest
+The push refers to repository [319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-frontend]
+e6f31ffc071e: Layer already exists
+ab1fd9049751: Layer already exists
+01bf363d61e6: Layer already exists
+6a190619c168: Layer already exists
+c16defe09b2f: Layer already exists
+5b429a43b8df: Layer already exists
+967885d218c5: Layer already exists
+ce42635eeddd: Layer already exists
+c75b9c33e8b0: Layer already exists
+latest: digest: sha256:8a21469663731c1e9803d90589ccb5ea6ca877f3df25f19b465583ea731274f7 size: 2264
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Step 2: Build & Push Hello Service)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] dir
+Running in /var/lib/jenkins/workspace/streaming-app-containerized-scaling/backend/helloService
+[Pipeline] {
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker build -t 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-hello-service:4 .
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  43.01kB
+Step 1/7 : FROM node:18-alpine
+ ---> 8d6421d663b4
+Step 2/7 : WORKDIR /usr/src/app
+ ---> Running in 55380728d53c
+ ---> Removed intermediate container 55380728d53c
+ ---> d44fb072797e
+Step 3/7 : COPY package*.json ./
+ ---> 127c2902b521
+Step 4/7 : RUN npm install --only=production
+ ---> Running in 42dee0708d76
+[91mnpm warn config only Use `--omit=dev` to omit dev dependencies from the install.
+[0m
+added 98 packages, and audited 99 packages in 5s
+
+15 packages are looking for funding
+  run `npm fund` for details
+
+11 vulnerabilities (3 low, 2 moderate, 6 high)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+[91mnpm notice
+npm notice New major version of npm available! 10.8.2 -> 12.0.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.1
+npm notice To update run: npm install -g npm@12.0.1
+npm notice
+[0m ---> Removed intermediate container 42dee0708d76
+ ---> 36594ca30d74
+Step 5/7 : COPY . .
+ ---> f8a0aed1e46c
+Step 6/7 : EXPOSE 3001
+ ---> Running in ac8a1c8fdba7
+ ---> Removed intermediate container ac8a1c8fdba7
+ ---> 67ac6f8ff025
+Step 7/7 : CMD ["node", "index.js"]
+ ---> Running in 83f347c4320f
+ ---> Removed intermediate container 83f347c4320f
+ ---> 9714d833b349
+Successfully built 9714d833b349
+Successfully tagged 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-hello-service:4
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker tag 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-hello-service:4 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-hello-service:4
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker push 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-hello-service:4
+The push refers to repository [319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-hello-service]
+1e5a4c89cee5: Waiting
+25ff2da83641: Waiting
+de2785b7da79: Waiting
+6c38163fdfa4: Waiting
+ad08553e7b89: Waiting
+e026c96e6c58: Waiting
+f18232174bc9: Waiting
+dd71dde834b5: Waiting
+25ff2da83641: Pushed
+de2785b7da79: Pushed
+e026c96e6c58: Pushed
+1e5a4c89cee5: Pushed
+6c38163fdfa4: Pushed
+ad08553e7b89: Pushed
+f18232174bc9: Pushed
+dd71dde834b5: Pushed
+4: digest: sha256:9714d833b3490a2acdc5e750f4a08bde22417c140f8e37ffa4f57430cb49b341 size: 2058
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker tag 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-hello-service:4 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-hello-service:latest
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker push 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-hello-service:latest
+The push refers to repository [319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-hello-service]
+de2785b7da79: Layer already exists
+6c38163fdfa4: Layer already exists
+ad08553e7b89: Layer already exists
+e026c96e6c58: Layer already exists
+f18232174bc9: Layer already exists
+dd71dde834b5: Layer already exists
+1e5a4c89cee5: Layer already exists
+25ff2da83641: Layer already exists
+latest: digest: sha256:9714d833b3490a2acdc5e750f4a08bde22417c140f8e37ffa4f57430cb49b341 size: 2058
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Step 2: Build & Push Profile Service)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] dir
+Running in /var/lib/jenkins/workspace/streaming-app-containerized-scaling/backend/profileService
+[Pipeline] {
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker build -t 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-profile-service:4 .
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  53.25kB
+Step 1/7 : FROM node:18-alpine
+ ---> 8d6421d663b4
+Step 2/7 : WORKDIR /app
+ ---> Using cache
+ ---> e218c6f92cbf
+Step 3/7 : COPY package*.json ./
+ ---> a42a30b43fb9
+Step 4/7 : RUN npm install --production
+ ---> Running in 35782df7e03c
+[91mnpm warn config production Use `--omit=dev` instead.
+[0m
+added 120 packages, and audited 121 packages in 5s
+
+16 packages are looking for funding
+  run `npm fund` for details
+
+12 vulnerabilities (3 low, 2 moderate, 6 high, 1 critical)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+[91mnpm notice
+npm notice New major version of npm available! 10.8.2 -> 12.0.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.1
+npm notice To update run: npm install -g npm@12.0.1
+npm notice
+[0m ---> Removed intermediate container 35782df7e03c
+ ---> 72404c996312
+Step 5/7 : COPY . .
+ ---> 359faf2fa7ef
+Step 6/7 : EXPOSE 3002
+ ---> Running in bcfe50f459fd
+ ---> Removed intermediate container bcfe50f459fd
+ ---> 36431e8dda8e
+Step 7/7 : CMD ["node", "index.js"]
+ ---> Running in 6c751fae3246
+ ---> Removed intermediate container 6c751fae3246
+ ---> 0ca1d7afc75d
+Successfully built 0ca1d7afc75d
+Successfully tagged 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-profile-service:4
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker tag 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-profile-service:4 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-profile-service:4
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker push 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-profile-service:4
+The push refers to repository [319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-profile-service]
+831f1ea68605: Waiting
+f18232174bc9: Waiting
+dd71dde834b5: Waiting
+1e5a4c89cee5: Waiting
+25ff2da83641: Waiting
+1a608d94e551: Waiting
+dd06ffa97efc: Waiting
+dfff1d3b9177: Waiting
+dd06ffa97efc: Pushed
+831f1ea68605: Pushed
+1a608d94e551: Pushed
+25ff2da83641: Pushed
+f18232174bc9: Pushed
+1e5a4c89cee5: Pushed
+dfff1d3b9177: Pushed
+dd71dde834b5: Pushed
+4: digest: sha256:0ca1d7afc75ddf1c557a08ca618745eb77600d0d410bdf945542fed85f6ac246 size: 2057
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker tag 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-profile-service:4 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-profile-service:latest
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
++ docker push 319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-profile-service:latest
+The push refers to repository [319918321628.dkr.ecr.ap-south-1.amazonaws.com/mern-profile-service]
+1a608d94e551: Layer already exists
+dd06ffa97efc: Layer already exists
+dfff1d3b9177: Layer already exists
+831f1ea68605: Layer already exists
+f18232174bc9: Layer already exists
+dd71dde834b5: Layer already exists
+1e5a4c89cee5: Layer already exists
+25ff2da83641: Layer already exists
+latest: digest: sha256:0ca1d7afc75ddf1c557a08ca618745eb77600d0d410bdf945542fed85f6ac246 size: 2057
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // dir
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Step 9: ChatOps Initialization Alert)
+[Pipeline] withCredentials
+Masking supported pattern matches of $AWS_ACCESS_KEY_ID or $AWS_SECRET_ACCESS_KEY
+[Pipeline] {
+[Pipeline] sh
++ aws sns publish --topic-arn arn:aws:sns:ap-south-1:319918321628:mern-deployment-alerts --region ap-south-1 --subject MERN Deployment Initiated --message 🚀 Starting deployment phase for Build #4 to cluster mern-production-cluster.
+{
+    "MessageId": "b27b7323-2dfd-5d97-8acc-11f268734d37"
+}
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Step 5: Create EKS Cluster (If Not Exists))
+[Pipeline] withCredentials
+Masking supported pattern matches of $AWS_ACCESS_KEY_ID or $AWS_SECRET_ACCESS_KEY
+[Pipeline] {
+[Pipeline] script
+[Pipeline] {
+[Pipeline] sh
++ aws eks describe-cluster --name mern-production-cluster --region ap-south-1
+
+aws: [ERROR]: An error occurred (ResourceNotFoundException) when calling the DescribeCluster operation: No cluster found for name: mern-production-cluster.
+
+Additional error details:
+clusterName: mern-production-cluster
+[Pipeline] echo
+⚠️ EKS Cluster does not exist! Initializing cluster creation via eksctl...
+[Pipeline] sh
++ eksctl create cluster --name mern-production-cluster --region ap-south-1 --nodegroup-name mern-workers --node-type t3.medium --nodes 2 --managed
+2026-07-15 08:22:43 [ℹ]  eksctl version 0.229.0
+2026-07-15 08:22:43 [ℹ]  using region ap-south-1
+2026-07-15 08:22:44 [ℹ]  setting availability zones to [ap-south-1b ap-south-1a ap-south-1c]
+2026-07-15 08:22:44 [ℹ]  subnets for ap-south-1b - public:192.168.0.0/19 private:192.168.96.0/19
+2026-07-15 08:22:44 [ℹ]  subnets for ap-south-1a - public:192.168.32.0/19 private:192.168.128.0/19
+2026-07-15 08:22:44 [ℹ]  subnets for ap-south-1c - public:192.168.64.0/19 private:192.168.160.0/19
+2026-07-15 08:22:44 [ℹ]  nodegroup "mern-workers" will use "" [AmazonLinux2023/1.34]
+2026-07-15 08:22:44 [!]  Auto Mode will be enabled by default in an upcoming release of eksctl. This means managed node groups and managed networking add-ons will no longer be created by default. To maintain current behavior, explicitly set 'autoModeConfig.enabled: false' in your cluster configuration. Learn more: https://eksctl.io/usage/auto-mode/
+2026-07-15 08:22:44 [ℹ]  using Kubernetes version 1.34
+2026-07-15 08:22:44 [ℹ]  creating EKS cluster "mern-production-cluster" in "ap-south-1" region with managed nodes
+2026-07-15 08:22:44 [ℹ]  will create 2 separate CloudFormation stacks for cluster itself and the initial managed nodegroup
+2026-07-15 08:22:44 [ℹ]  if you encounter any issues, check CloudFormation console or try 'eksctl utils describe-stacks --region=ap-south-1 --cluster=mern-production-cluster'
+2026-07-15 08:22:44 [ℹ]  Kubernetes API endpoint access will use default of {publicAccess=true, privateAccess=false} for cluster "mern-production-cluster" in "ap-south-1"
+2026-07-15 08:22:44 [ℹ]  CloudWatch logging will not be enabled for cluster "mern-production-cluster" in "ap-south-1"
+2026-07-15 08:22:44 [ℹ]  you can enable it with 'eksctl utils update-cluster-logging --enable-types={SPECIFY-YOUR-LOG-TYPES-HERE (e.g. all)} --region=ap-south-1 --cluster=mern-production-cluster'
+2026-07-15 08:22:44 [ℹ]  default addons metrics-server, vpc-cni, kube-proxy, coredns were not specified, will install them as EKS addons
+2026-07-15 08:22:44 [ℹ]  
+2 sequential tasks: { create cluster control plane "mern-production-cluster", 
+    2 sequential sub-tasks: { 
+        2 sequential sub-tasks: { 
+            1 task: { create addons },
+            wait for control plane to become ready,
+        },
+        create managed nodegroup "mern-workers",
+    } 
+}
+2026-07-15 08:22:44 [ℹ]  building cluster stack "eksctl-mern-production-cluster-cluster"
+2026-07-15 08:22:44 [ℹ]  deploying stack "eksctl-mern-production-cluster-cluster"
+2026-07-15 08:23:14 [ℹ]  waiting for CloudFormation stack "eksctl-mern-production-cluster-cluster"
+2026-07-15 08:23:44 [ℹ]  waiting for CloudFormation stack "eksctl-mern-production-cluster-cluster"
+2026-07-15 08:24:44 [ℹ]  waiting for CloudFormation stack "eksctl-mern-production-cluster-cluster"
+2026-07-15 08:25:44 [ℹ]  waiting for CloudFormation stack "eksctl-mern-production-cluster-cluster"
+2026-07-15 08:26:44 [ℹ]  waiting for CloudFormation stack "eksctl-mern-production-cluster-cluster"
+2026-07-15 08:27:44 [ℹ]  waiting for CloudFormation stack "eksctl-mern-production-cluster-cluster"
+2026-07-15 08:28:44 [ℹ]  waiting for CloudFormation stack "eksctl-mern-production-cluster-cluster"
+2026-07-15 08:29:44 [ℹ]  waiting for CloudFormation stack "eksctl-mern-production-cluster-cluster"
+2026-07-15 08:29:45 [!]  recommended policies were found for "vpc-cni" addon, but since OIDC is disabled on the cluster, eksctl cannot configure the requested permissions; the recommended way to provide IAM permissions for "vpc-cni" addon is via pod identity associations; after addon creation is completed, add all recommended policies to the config file, under `addon.PodIdentityAssociations`, and run `eksctl update addon`
+2026-07-15 08:29:45 [ℹ]  creating addon: vpc-cni
+2026-07-15 08:29:45 [ℹ]  successfully created addon: vpc-cni
+2026-07-15 08:29:46 [ℹ]  creating addon: kube-proxy
+2026-07-15 08:29:46 [ℹ]  successfully created addon: kube-proxy
+2026-07-15 08:29:46 [ℹ]  creating addon: coredns
+2026-07-15 08:29:46 [ℹ]  successfully created addon: coredns
+2026-07-15 08:31:47 [ℹ]  building managed nodegroup stack "eksctl-mern-production-cluster-nodegroup-mern-workers"
+2026-07-15 08:31:47 [ℹ]  deploying stack "eksctl-mern-production-cluster-nodegroup-mern-workers"
+2026-07-15 08:31:47 [ℹ]  waiting for CloudFormation stack "eksctl-mern-production-cluster-nodegroup-mern-workers"
+2026-07-15 08:32:17 [ℹ]  waiting for CloudFormation stack "eksctl-mern-production-cluster-nodegroup-mern-workers"
+2026-07-15 08:33:02 [ℹ]  waiting for CloudFormation stack "eksctl-mern-production-cluster-nodegroup-mern-workers"
+2026-07-15 08:34:44 [ℹ]  waiting for CloudFormation stack "eksctl-mern-production-cluster-nodegroup-mern-workers"
+2026-07-15 08:34:44 [ℹ]  waiting for the control plane to become ready
+2026-07-15 08:34:47 [✔]  saved kubeconfig as "/var/lib/jenkins/.kube/config"
+2026-07-15 08:34:47 [ℹ]  no tasks
+2026-07-15 08:34:47 [✔]  all EKS cluster resources for "mern-production-cluster" have been created
+2026-07-15 08:34:47 [ℹ]  nodegroup "mern-workers" has 2 node(s)
+2026-07-15 08:34:47 [ℹ]  node "ip-192-168-16-86.ap-south-1.compute.internal" is ready
+2026-07-15 08:34:47 [ℹ]  node "ip-192-168-32-131.ap-south-1.compute.internal" is ready
+2026-07-15 08:34:47 [ℹ]  waiting for at least 2 node(s) to become ready in "mern-workers"
+2026-07-15 08:34:47 [ℹ]  nodegroup "mern-workers" has 2 node(s)
+2026-07-15 08:34:47 [ℹ]  node "ip-192-168-16-86.ap-south-1.compute.internal" is ready
+2026-07-15 08:34:47 [ℹ]  node "ip-192-168-32-131.ap-south-1.compute.internal" is ready
+2026-07-15 08:34:47 [✔]  created 1 managed nodegroup(s) in cluster "mern-production-cluster"
+2026-07-15 08:34:47 [ℹ]  creating addon: metrics-server
+2026-07-15 08:34:47 [ℹ]  successfully created addon: metrics-server
+2026-07-15 08:34:52 [ℹ]  kubectl command should work with "/var/lib/jenkins/.kube/config", try 'kubectl get nodes'
+2026-07-15 08:34:52 [✔]  EKS cluster "mern-production-cluster" in "ap-south-1" region is ready
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Step 5: Deploy via Helm)
+[Pipeline] withCredentials
+Masking supported pattern matches of $AWS_ACCESS_KEY_ID or $AWS_SECRET_ACCESS_KEY
+[Pipeline] {
+[Pipeline] sh
++ aws eks update-kubeconfig --region ap-south-1 --name mern-production-cluster
+Added new context arn:aws:eks:ap-south-1:319918321628:cluster/mern-production-cluster to /var/lib/jenkins/.kube/config
++ helm upgrade --install mern-production ./charts/mern-stack --set frontend.tag=4 --set helloService.tag=4 --set profileService.tag=4 --values ./charts/mern-stack/values.yaml
+Release "mern-production" does not exist. Installing it now.
+NAME: mern-production
+LAST DEPLOYED: Wed Jul 15 08:35:04 2026
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+DESCRIPTION: Install complete
+TEST SUITE: None
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Step 6: Post-Deployment Health Validation)
+[Pipeline] sh
++ echo === Verifying Kubernetes Pod Deployment States ===
+=== Verifying Kubernetes Pod Deployment States ===
++ kubectl get pods -n default
+error: You must be logged in to the server (Unauthorized)
++ true
++ echo === Retrieving Live Public Facing Frontend Ingress URL ===
+=== Retrieving Live Public Facing Frontend Ingress URL ===
++ kubectl get svc mern-frontend-svc
+error: You must be logged in to the server (Unauthorized)
++ kubectl get svc -n default
+error: You must be logged in to the server (Unauthorized)
++ true
++ echo 
+
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] sh
++ docker system prune -f
+Deleted Images:
+untagged: sha256:746b0ecfb72888e467323c528a7c9ede2e1a55463fee123a7976f4fb65691661
+deleted: sha256:746b0ecfb72888e467323c528a7c9ede2e1a55463fee123a7976f4fb65691661
+untagged: sha256:e218c6f92cbffb09bde22210c37eaecbbd94af38c041553ceacbd932a7419701
+deleted: sha256:e218c6f92cbffb09bde22210c37eaecbbd94af38c041553ceacbd932a7419701
+untagged: sha256:127c2902b52190b96de76469fba63e60c21c1163eb3690ea6bbf124a4d96ef95
+deleted: sha256:127c2902b52190b96de76469fba63e60c21c1163eb3690ea6bbf124a4d96ef95
+untagged: sha256:359faf2fa7ef3c512708913acc6ab41fdad9fe8ccb274d69da75bb6fdd54b40f
+deleted: sha256:359faf2fa7ef3c512708913acc6ab41fdad9fe8ccb274d69da75bb6fdd54b40f
+untagged: sha256:36594ca30d74c720bdf69b3c6f4a0109b579b836f4ad04a35ab3169041740315
+deleted: sha256:36594ca30d74c720bdf69b3c6f4a0109b579b836f4ad04a35ab3169041740315
+untagged: sha256:9673fa295cf2bf4f6a56734c83d593e26f34b624de9a6d6caa9dfc5b7a76b6c7
+deleted: sha256:9673fa295cf2bf4f6a56734c83d593e26f34b624de9a6d6caa9dfc5b7a76b6c7
+untagged: sha256:099ec6db7281f0295104931c8bb3ccaf60209d065d7936e067b227ee3c10a1f8
+deleted: sha256:099ec6db7281f0295104931c8bb3ccaf60209d065d7936e067b227ee3c10a1f8
+untagged: sha256:67ac6f8ff02550d38fd819cd0b8b249c78754b660317b91a55050a0dd59040c8
+deleted: sha256:67ac6f8ff02550d38fd819cd0b8b249c78754b660317b91a55050a0dd59040c8
+untagged: sha256:72404c996312ec61ddc09d7ac98b985ea1be27992c6105282288cf38b640a6c3
+deleted: sha256:72404c996312ec61ddc09d7ac98b985ea1be27992c6105282288cf38b640a6c3
+untagged: sha256:89cc63ee199da68ff8adbb3dc3d0046626be7108f9574f067d91fcb63abd5047
+deleted: sha256:89cc63ee199da68ff8adbb3dc3d0046626be7108f9574f067d91fcb63abd5047
+untagged: sha256:b845675db210efcd96869911ee93f703e72672643b910384898026fd42a23344
+deleted: sha256:b845675db210efcd96869911ee93f703e72672643b910384898026fd42a23344
+untagged: sha256:d44fb072797ed20794a44c1cb651a4e37ceab932ab0669e768bb5bfcc1df2aec
+deleted: sha256:d44fb072797ed20794a44c1cb651a4e37ceab932ab0669e768bb5bfcc1df2aec
+untagged: sha256:36431e8dda8ea6bc6d81ea684515fe626a2d8ffe0c6fc52fc078ff3c8fdddbad
+deleted: sha256:36431e8dda8ea6bc6d81ea684515fe626a2d8ffe0c6fc52fc078ff3c8fdddbad
+untagged: sha256:a42a30b43fb927744ec63da6810ceed7f556bbb84d12b7a688a35d016ca55810
+deleted: sha256:a42a30b43fb927744ec63da6810ceed7f556bbb84d12b7a688a35d016ca55810
+untagged: sha256:d2129f407d86d1e4edebd03e7ab2b052d1cf09d962858642e7d9399291513af6
+deleted: sha256:d2129f407d86d1e4edebd03e7ab2b052d1cf09d962858642e7d9399291513af6
+untagged: sha256:f8a0aed1e46c84384cb3f612600dbdb970043229d8471033c9167809b57d7121
+deleted: sha256:f8a0aed1e46c84384cb3f612600dbdb970043229d8471033c9167809b57d7121
+
+Total reclaimed space: 110.8MB
+[Pipeline] withCredentials
+Masking supported pattern matches of $AWS_ACCESS_KEY_ID or $AWS_SECRET_ACCESS_KEY
+[Pipeline] {
+[Pipeline] sh
++ aws sns publish --topic-arn arn:aws:sns:ap-south-1:319918321628:mern-deployment-alerts --region ap-south-1 --subject Deployment SUCCESS --message ✅ Pipeline Success: Build #4 has been successfully deployed to the EKS cluster!
+{
+    "MessageId": "b6dc2112-b74d-5b59-a0ec-43c3ffc022fe"
+}
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS

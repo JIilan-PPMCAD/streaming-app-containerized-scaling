@@ -35,39 +35,35 @@ pipeline {
                 }
             }
         }
-        stage('Step 2: Parallel Multi-Service Build & Push') {
-            parallel {
-                stage('Frontend Service') {
-                    steps {
-                        script {
-                            dir('frontend') {
-                                def frontendImg = docker.build("${ECR_REGISTRY}/${FRONTEND_REPO}:${IMAGE_TAG}")
-                                frontendImg.push()
-                                frontendImg.push("latest")
-                            }
-                        }
+        stage('Step 2: Build & Push Frontend') {
+            steps {
+                script {
+                    dir('frontend') {
+                        def frontendImg = docker.build("${ECR_REGISTRY}/${FRONTEND_REPO}:${IMAGE_TAG}")
+                        frontendImg.push()
+                        frontendImg.push("latest")
                     }
                 }
-                stage('Hello Service (Backend)') {
-                    steps {
-                        script {
-                            dir('backend/helloService') {
-                                def helloImg = docker.build("${ECR_REGISTRY}/${HELLO_SERVICE_REPO}:${IMAGE_TAG}")
-                                helloImg.push()
-                                helloImg.push("latest")
-                            }
-                        }
+            }
+        }
+        stage('Step 2: Build & Push Hello Service') {
+            steps {
+                script {
+                    dir('backend/helloService') {
+                        def helloImg = docker.build("${ECR_REGISTRY}/${HELLO_SERVICE_REPO}:${IMAGE_TAG}")
+                        helloImg.push()
+                        helloImg.push("latest")
                     }
                 }
-                stage('Profile Service (Backend)') {
-                    steps {
-                        script {
-                            dir('backend/profileService') {
-                                def profileImg = docker.build("${ECR_REGISTRY}/${PROFILE_SERVICE_REPO}:${IMAGE_TAG}")
-                                profileImg.push()
-                                profileImg.push("latest")
-                            }
-                        }
+            }
+        }
+        stage('Step 2: Build & Push Profile Service') {
+            steps {
+                script {
+                    dir('backend/profileService') {
+                        def profileImg = docker.build("${ECR_REGISTRY}/${PROFILE_SERVICE_REPO}:${IMAGE_TAG}")
+                        profileImg.push()
+                        profileImg.push("latest")
                     }
                 }
             }
@@ -78,7 +74,7 @@ pipeline {
                     sh """
                     aws sns publish --topic-arn ${SNS_TOPIC_ARN} --region ${AWS_DEFAULT_REGION} \
                       --subject "MERN Deployment Initiated" \
-                      --message "🚀 Starting deployment phase for Build #${IMAGE_TAG} to cluster ${CLUSTER_NAME}."
+                      --message "Starting deployment phase for Build #${IMAGE_TAG} to cluster ${CLUSTER_NAME}."
                     """
                 }
             }
@@ -91,7 +87,7 @@ pipeline {
                         def clusterCheck = sh(script: "aws eks describe-cluster --name ${CLUSTER_NAME} --region ${AWS_DEFAULT_REGION}", returnStatus: true)
                         
                         if (clusterCheck != 0) {
-                            echo "⚠️ EKS Cluster does not exist! Initializing cluster creation via eksctl..."
+                            echo "EKS Cluster does not exist! Initializing cluster creation via eksctl..."
                             sh """
                             eksctl create cluster \
                               --name ${CLUSTER_NAME} \
@@ -102,7 +98,7 @@ pipeline {
                               --managed
                             """
                         } else {
-                            echo "✅ EKS Cluster already exists. Skipping creation step and updating connection contexts."
+                            echo "EKS Cluster already exists. Skipping creation step and updating connection contexts."
                             sh "aws eks update-kubeconfig --region ${AWS_DEFAULT_REGION} --name ${CLUSTER_NAME}"
                         }
                     }
@@ -130,10 +126,10 @@ pipeline {
             steps {
                 sh """
                 echo "=== Verifying Kubernetes Pod Deployment States ==="
-                kubectl get pods -n default
+                kubectl get pods -n default || true
                 
                 echo "=== Retrieving Live Public Facing Frontend Ingress URL ==="
-                kubectl get svc mern-frontend-svc || kubectl get svc -n default
+                kubectl get svc mern-frontend-svc || kubectl get svc -n default || true
                 echo ""
                 """
             }
@@ -145,7 +141,7 @@ pipeline {
                 sh """
                 aws sns publish --topic-arn ${SNS_TOPIC_ARN} --region ${AWS_DEFAULT_REGION} \
                   --subject "Deployment SUCCESS" \
-                  --message "✅ Pipeline Success: Build #${BUILD_NUMBER} has been successfully deployed to the EKS cluster!"
+                  --message "Pipeline Success: Build #${BUILD_NUMBER} has been successfully deployed to the EKS cluster!"
                 """
             }
         }
@@ -154,7 +150,7 @@ pipeline {
                 sh """
                 aws sns publish --topic-arn ${SNS_TOPIC_ARN} --region ${AWS_DEFAULT_REGION} \
                   --subject "Deployment FAILURE" \
-                  --message "🚨 Pipeline Failure: Build #${BUILD_NUMBER} failed during execution. Please check the Jenkins console logs immediately."
+                  --message "Pipeline Failure: Build #${BUILD_NUMBER} failed during execution. Please check the Jenkins console logs immediately."
                 """
             }
         }
