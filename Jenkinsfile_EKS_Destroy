@@ -1,0 +1,13 @@
+pipeline {
+    agent any
+    stages {
+        stage('Teardown Lab Resources') {
+            steps {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-ecr-creds']]) {
+                    sh "eksctl delete cluster --name mern-production-cluster --region ap-south-1"
+                }
+            }
+        }
+    }
+}
+
